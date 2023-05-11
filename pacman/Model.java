@@ -12,17 +12,17 @@ import javax.swing.Timer;
 public class Model extends JPanel implements ActionListener{
 
 	private Dimension d;
-    private final Font smallFont = new Font("Arial", Font.BOLD, 14);
+    private final Font smallFont = new Font("Arial", Font.BOLD, 16);
     private boolean inGame = false;
     private boolean dying = false;
 
     private final int BLOCK_SIZE = 24;
-    private final int N_BLOCKS = 15;
+    private final int N_BLOCKS = 24;
     private final int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final int MAX_GHOSTS = 12;
     private final int PACMAN_SPEED = 6;
 
-    private int N_GHOSTS = 6;
+    private int N_GHOSTS = 8;
     private int lives, score;
     private int[] dx, dy;
     private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
@@ -34,21 +34,31 @@ public class Model extends JPanel implements ActionListener{
     private int req_dx, req_dy;
 
     private final short levelData[] = {
-    	19, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22,
-        17, 16, 16, 16, 16, 24, 16, 16, 16, 16, 16, 16, 16, 16, 20,
-        25, 24, 24, 24, 28, 0, 17, 16, 16, 16, 16, 16, 16, 16, 20,
-        0,  0,  0,  0,  0,  0, 17, 16, 16, 16, 16, 16, 16, 16, 20,
-        19, 18, 18, 18, 18, 18, 16, 16, 16, 16, 24, 24, 24, 24, 20,
-        17, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0,  0,  0,   0, 21,
-        17, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0,  0,  0,   0, 21,
-        17, 16, 16, 16, 24, 16, 16, 16, 16, 20, 0,  0,  0,   0, 21,
-        17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 18, 18, 18, 18, 20,
-        17, 24, 24, 28, 0, 25, 24, 24, 16, 16, 16, 16, 16, 16, 20,
-        21, 0,  0,  0,  0,  0,  0,   0, 17, 16, 16, 16, 16, 16, 20,
-        17, 18, 18, 22, 0, 19, 18, 18, 16, 16, 16, 16, 16, 16, 20,
-        17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 20,
-        17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 20,
-        25, 24, 24, 24, 26, 24, 24, 24, 24, 24, 24, 24, 24, 24, 28
+            19, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22,
+            17, 16, 16, 16, 16, 24, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            25, 24, 24, 24, 28, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            0,  0,  0,  0,  0,  0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            19, 18, 18, 18, 18, 18, 16, 16, 16, 16, 24, 24, 24, 24, 24, 24, 24, 24, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0, 0, 0, 0, 0, 0, 0, 0, 17, 16, 16, 16, 16, 20,
+            17, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0, 0, 0, 0, 0, 0, 0, 0, 17, 16, 16, 16, 16, 20,
+            17, 16, 16, 16, 24, 16, 16, 16, 16, 20, 0, 0, 0, 0, 0, 0, 0, 0, 17, 16, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 18, 18, 18, 18, 18, 18, 18, 18, 16, 16, 16, 16, 16, 20,
+            17, 24, 24, 28, 0, 25, 24, 24, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            21, 0,  0,  0,  0,  0,  0,   0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            17, 18, 18, 22, 0, 19, 18, 18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 16, 24, 16, 16, 16, 16, 16, 16, 24, 24, 24, 24, 24, 24, 16, 16, 16, 20,
+            17, 16, 16, 16, 18, 16, 20, 0, 17, 16, 16, 16, 16, 20, 0, 0, 0, 0, 0, 0, 17, 16, 16, 20,
+            17, 16, 16, 16, 24, 16, 20, 0, 25, 24, 24, 24, 24, 16, 22, 0, 0, 0, 0, 19, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 20, 0, 0, 0, 0, 0, 0, 17, 16, 22, 0, 0, 19, 16, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 16, 18, 18, 18, 18, 18, 18, 16, 16, 16, 18, 18, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 16, 18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
+            25, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 28
+
     };
 
     private final int validSpeeds[] = {1, 2, 3, 4, 6, 8};
@@ -67,18 +77,18 @@ public class Model extends JPanel implements ActionListener{
         initGame();
     }
     private void loadImages() {
-        down = new ImageIcon("/Users/anjanshrestha/Downloads/GitHub/Gamers/images/down.gif").getImage();
-        ghost = new ImageIcon("/Users/anjanshrestha/Downloads/GitHub/Gamers/images/ghost.gif").getImage();
-        heart = new ImageIcon("/Users/anjanshrestha/Downloads/GitHub/Gamers/images/heart.png").getImage();
-        left = new ImageIcon("/Users/anjanshrestha/Downloads/GitHub/Gamers/images/left.gif").getImage();
-        pacman = new ImageIcon("/Users/anjanshrestha/Downloads/GitHub/Gamers/images/pacman.png").getImage();
-        right = new ImageIcon("/Users/anjanshrestha/Downloads/GitHub/Gamers/images/right.gif").getImage();
-        up= new ImageIcon("/Users/anjanshrestha/Downloads/GitHub/Gamers/images/up.gif").getImage();
+        down = new ImageIcon("C:\\Users\\Dell\\IdeaProjects\\Gamers\\images\\down.gif").getImage();
+        ghost = new ImageIcon("C:\\Users\\Dell\\IdeaProjects\\Gamers\\images\\ghost.gif").getImage();
+        heart = new ImageIcon("C:\\Users\\Dell\\IdeaProjects\\Gamers\\images\\heart.png").getImage();
+        left = new ImageIcon("C:\\Users\\Dell\\IdeaProjects\\Gamers\\images\\left.gif").getImage();
+        pacman = new ImageIcon("C:\\Users\\Dell\\IdeaProjects\\Gamers\\images\\pacman.png").getImage();
+        right = new ImageIcon("C:\\Users\\Dell\\IdeaProjects\\Gamers\\images\\right.gif").getImage();
+        up= new ImageIcon("C:\\Users\\Dell\\IdeaProjects\\Gamers\\images\\up.gif").getImage();
     }
     private void initVariables() {
 
         screenData = new short[N_BLOCKS * N_BLOCKS];
-        d = new Dimension(500, 500);
+        d = new Dimension(650, 650);
         ghost_x = new int[MAX_GHOSTS];
         ghost_dx = new int[MAX_GHOSTS];
         ghost_y = new int[MAX_GHOSTS];
@@ -87,14 +97,13 @@ public class Model extends JPanel implements ActionListener{
         dx = new int[4];
         dy = new int[4];
 
-        timer = new Timer(40, this);
+        timer = new Timer(30, this);
         timer.start();
     }
 
     private void playGame(Graphics2D g2d) {
 
         if (dying) {
-
             death(g2d);
 
         } else {
@@ -108,10 +117,16 @@ public class Model extends JPanel implements ActionListener{
 
     private void showIntroScreen(Graphics2D g2d) {
 
-        String start = "Press SPACE to start";
+        String start = "Press SPACEBAR to Start";
         g2d.setColor(Color.yellow);
-        g2d.drawString(start, (SCREEN_SIZE)/4, 150);
+        g2d.drawString(start, (SCREEN_SIZE)/3, 300);
     }
+//    private void endGame(Graphics2D g1) {
+//
+//        String end = "Game Over!";
+//        g1.setColor(Color.red);
+//        g1.drawString(end, (SCREEN_SIZE)/3, 300);
+//    }
 
     private void drawScore(Graphics2D g) {
         g.setFont(smallFont);
@@ -160,9 +175,6 @@ public class Model extends JPanel implements ActionListener{
 
         if (lives == 0) {
             inGame = false;
-            String start = "Game Over!Play Again";
-            g1.setColor(Color.red);
-            g1.drawString(start, (SCREEN_SIZE)/2, 200);
         }
 
         continueLevel();
@@ -325,7 +337,7 @@ public class Model extends JPanel implements ActionListener{
                     g2d.drawLine(x, y + BLOCK_SIZE - 1, x + BLOCK_SIZE - 1,
                             y + BLOCK_SIZE - 1);
                 }
-
+//
                 if ((screenData[i] & 16) != 0) {
                     g2d.setColor(new Color(255,255,255));
                     g2d.fillOval(x + 10, y + 10, 6, 6);
